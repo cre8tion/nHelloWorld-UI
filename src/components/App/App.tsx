@@ -1,74 +1,55 @@
-import React from "react";
+import React, { ChangeEvent, useState } from "react";
 import { Nav } from "../Nav";
-import * as GuestBook from "../../contracts/guest-book";
+import * as HelloWorld from "../../contracts/hello-world";
+import { wallet } from "../../utils/near";
 
 export function App() {
-  React.useEffect(() => {
-    // this is showing an overly-simple way to use the GuestBook import by just
-    // logging the result of the call to `getMessages`
-    GuestBook.getMessages().then(console.log);
-  }, []);
+  const currentUser = wallet.getAccountId();
+  const [input, setInput] = useState<string>();
+  const [text, setText] = useState<string>();
+
+  const getHelloWorldName = () => {
+    if (input) {
+      HelloWorld.getHelloWorld({
+        name: input
+      }).then(res => setText(res));
+    }
+  }
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setInput(e.target.value);
+  };
 
   return (
     <>
       <Nav />
       <main className="container">
-        <h1>Welcome</h1>
-        <p>Edit files and save to reload. Some interesting files:</p>
-        <ul>
-          <li>
-            <code>.env</code>
-          </li>
-          <li>
-            <code>src/utils/near.ts</code>
-          </li>
-          <li>
-            <code>src/components/Nav/Nav.tsx</code>
-          </li>
-          <li>
-            <code>src/contracts/guest-book.ts</code>
-          </li>
-          <li>
-            <code>src/components/App/App.tsx</code>
-          </li>
-        </ul>
-        <p>
-          Note that this site does not currently do anything with the contract
-          other than sign someone in. For an example of using the{" "}
-          <code>guest-book.testnet</code> contract, see{" "}
-          <a
-            href="https://github.com/near-examples/guest-book"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            near-examples/guest-book
-          </a>
-          . You may also want to learn more about{" "}
-          <a
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          ,{" "}
-          <a
-            href="https://create-react-app.dev/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            create-react-app
-          </a>
-          , and{" "}
-          <a
-            href="https://www.near.university"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            NEAR
-          </a>
-          .
-        </p>
+        <div className="flex space-x-2 justify-center">
+          <h1 className="sm:text-xl md:text-3xl">Welcome</h1>
+          {
+            currentUser ? <h1 className="sm:text-xl md:text-3xl">{currentUser}!</h1>
+              : <h1 className="sm:text-xl md:text-3xl">User!</h1>
+          }
+        </div>
+        <br />
+        <div className="flex items-center max-w-md mx-auto space-x-4">
+          <div className="w-full">
+            <input className="w-full px-4 py-1 text-white rounded-full focus:outline-none"
+              placeholder="name" onChange={handleChange} />
+          </div>
+          <div>
+            <button type="submit" onClick={getHelloWorldName} className="h-10 px-6 font-semibold rounded-md bg-black text-white" >
+              Submit
+            </button>
+          </div>
+        </div>
+        <br />
+        <div className="container flex justify-center">
+          {
+            text ? <p className="sm:text-lg md:text-xl">{text}</p>
+              : null
+          }
+        </div>
       </main>
     </>
   );

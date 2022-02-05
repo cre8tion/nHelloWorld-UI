@@ -2,14 +2,16 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import { App } from "./App";
 
-test("renders learn react link", () => {
+test("renders Sign In link", () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
+  const linkElement = screen.getByText(/Sign In/i);
   expect(linkElement).toBeInTheDocument();
 });
 
-test("renders learn NEAR link", () => {
+test("renders Sign In link", () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn NEAR/i);
-  expect(linkElement).toBeInTheDocument();
+  const textElement = screen.getByText(/Welcome/i);
+  const userElement = screen.getByText(/User!/i);
+  expect(textElement).toBeInTheDocument();
+  expect(userElement).toBeInTheDocument();
 });
